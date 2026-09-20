@@ -1,6 +1,17 @@
 export const IPC_CHANNELS = {
   CAPTURE_SCREENS: 'screens:capture',
+  TRANSCRIPTION_START: 'transcription:start',
+  TRANSCRIPTION_STOP: 'transcription:stop',
+  TRANSCRIPTION_AUDIO: 'transcription:audio',
+  TRANSCRIPT: 'transcription:transcript',
+  TRANSCRIPTION_ERROR: 'transcription:error',
 } as const;
+
+export const TRANSCRIPTION_SAMPLE_RATE = 16000;
+export const PCM_CHUNK_MS = 100;
+export const MS_PER_SECOND = 1000;
+export const INT16_MAX = 0x7fff;
+export const INT16_MIN_MAGNITUDE = 0x8000;
 
 export const AUDIO_STATUS = {
   IDLE: 'Idle',

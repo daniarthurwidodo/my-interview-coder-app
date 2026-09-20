@@ -1,6 +1,8 @@
-import { AUDIO_FFT_SIZE } from '../constants';
+import { AUDIO_FFT_SIZE, TRANSCRIPTION_SAMPLE_RATE } from '../constants';
 
 export interface SystemAudioSession {
+  audioContext: AudioContext;
+  source: MediaStreamAudioSourceNode;
   analyser: AnalyserNode;
   stop: () => Promise<void>;
 }
@@ -17,12 +19,15 @@ export async function startSystemAudioCapture(): Promise<SystemAudioSession> {
     throw new Error('No system audio track available');
   }
 
-  const audioContext = new AudioContext();
+  const audioContext = new AudioContext({ sampleRate: TRANSCRIPTION_SAMPLE_RATE });
+  const source = audioContext.createMediaStreamSource(stream);
   const analyser = audioContext.createAnalyser();
   analyser.fftSize = AUDIO_FFT_SIZE;
-  audioContext.createMediaStreamSource(stream).connect(analyser);
+  source.connect(analyser);
 
   return {
+    audioContext,
+    source,
     analyser,
     stop: async () => {
       stream.getTracks().forEach((track) => track.stop());

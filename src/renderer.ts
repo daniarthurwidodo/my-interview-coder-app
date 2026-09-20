@@ -27,13 +27,15 @@
  */
 
 import './index.css';
+import { startPcmStreaming } from './audio/pcmStreamer';
 import { startSystemAudioCapture } from './audio/systemAudio';
 import { startAudioMonitor } from './audio/waveform';
 import { AUDIO_STATUS, LISTEN_LABEL } from './constants';
+import { ElectronApi, TranscriptSegment } from './transcription/types';
 
 declare global {
   interface Window {
-    electronAPI: { captureScreens: () => Promise<string[]> };
+    electronAPI: ElectronApi;
   }
 }
 
@@ -70,7 +72,30 @@ const audioStatus = document.getElementById('audio-status') as HTMLSpanElement;
 const listenError = document.getElementById('listen-error') as HTMLParagraphElement;
 const waveformCanvas = document.getElementById('waveform') as HTMLCanvasElement;
 
+const transcriptFinal = document.getElementById('transcript-final') as HTMLDivElement;
+const transcriptInterim = document.getElementById('transcript-interim') as HTMLParagraphElement;
+
 let stopListening: (() => Promise<void>) | null = null;
+
+function renderTranscriptSegment({ text, isFinal }: TranscriptSegment): void {
+  if (!isFinal) {
+    transcriptInterim.textContent = text;
+    return;
+  }
+  transcriptInterim.textContent = '';
+  const line = document.createElement('p');
+  line.textContent = text;
+  transcriptFinal.append(line);
+}
+
+function showListenError(prefix: string, message: string): void {
+  listenError.textContent = `${prefix}: ${message}`;
+}
+
+window.electronAPI.onTranscript(renderTranscriptSegment);
+window.electronAPI.onTranscriptionError((message) =>
+  showListenError('Transcription error', message),
+);
 
 async function startListening(): Promise<void> {
   const session = await startSystemAudioCapture();
@@ -81,11 +106,29 @@ async function startListening(): Promise<void> {
       audioStatus.textContent = isPlaying ? AUDIO_STATUS.PLAYING : AUDIO_STATUS.SILENT;
     },
   });
-  stopListening = async () => {
+  let stopPcmStreaming = () => {};
+  const teardown = async () => {
     stopMonitor();
+    stopPcmStreaming();
+    await window.electronAPI.stopTranscription();
     await session.stop();
     audioStatus.textContent = AUDIO_STATUS.IDLE;
+    transcriptInterim.textContent = '';
   };
+
+  try {
+    transcriptFinal.replaceChildren();
+    await window.electronAPI.startTranscription();
+    stopPcmStreaming = await startPcmStreaming({
+      audioContext: session.audioContext,
+      source: session.source,
+      onChunk: window.electronAPI.sendAudioChunk,
+    });
+  } catch (error) {
+    await teardown();
+    throw error;
+  }
+  stopListening = teardown;
   listenButton.textContent = LISTEN_LABEL.STOP;
 }
 
@@ -101,9 +144,10 @@ async function handleListenClick(): Promise<void> {
       await startListening();
     }
   } catch (error) {
-    listenError.textContent = `Audio capture failed: ${
-      error instanceof Error ? error.message : String(error)
-    }`;
+    showListenError(
+      'Audio capture failed',
+      error instanceof Error ? error.message : String(error),
+    );
   } finally {
     listenButton.disabled = false;
   }

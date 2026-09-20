@@ -6,9 +6,18 @@ import {
   screen,
   session,
 } from 'electron';
+import fs from 'node:fs';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { IPC_CHANNELS } from './constants';
+import { registerTranscriptionIpc } from './transcription/registerTranscriptionIpc';
+
+const ENV_FILE_NAME = '.env';
+
+const loadEnvFile = () => {
+  const envFilePath = path.join(app.getAppPath(), ENV_FILE_NAME);
+  if (fs.existsSync(envFilePath)) process.loadEnvFile(envFilePath);
+};
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -69,7 +78,9 @@ const registerDisplayMediaHandler = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
+  loadEnvFile();
   registerDisplayMediaHandler();
+  registerTranscriptionIpc();
   createWindow();
 });
 

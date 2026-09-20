@@ -7,6 +7,11 @@ body {
   padding: 2rem;
 }
 
+#transcript-interim {
+  color: #888;
+  font-style: italic;
+}
+
 #waveform {
   display: block;
   max-width: 100%;
