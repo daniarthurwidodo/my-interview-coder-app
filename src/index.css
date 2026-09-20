@@ -12,6 +12,10 @@ body {
   font-style: italic;
 }
 
+#summary-text {
+  white-space: pre-wrap;
+}
+
 #waveform {
   display: block;
   max-width: 100%;

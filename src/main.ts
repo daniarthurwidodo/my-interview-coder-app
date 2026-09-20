@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { IPC_CHANNELS } from './constants';
+import { registerSummaryIpc } from './summary/registerSummaryIpc';
 import { registerTranscriptionIpc } from './transcription/registerTranscriptionIpc';
 
 const ENV_FILE_NAME = '.env';
@@ -80,6 +81,7 @@ const registerDisplayMediaHandler = () => {
 app.on('ready', () => {
   loadEnvFile();
   registerDisplayMediaHandler();
+  registerSummaryIpc();
   registerTranscriptionIpc();
   createWindow();
 });

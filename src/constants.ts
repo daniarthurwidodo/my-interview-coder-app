@@ -5,9 +5,11 @@ export const IPC_CHANNELS = {
   TRANSCRIPTION_AUDIO: 'transcription:audio',
   TRANSCRIPT: 'transcription:transcript',
   TRANSCRIPTION_ERROR: 'transcription:error',
+  SUMMARIZE: 'summary:summarize',
 } as const;
 
 export const TRANSCRIPTION_SAMPLE_RATE = 16000;
+export const SUMMARY_INTERVAL_MS = 30000;
 export const PCM_CHUNK_MS = 100;
 export const MS_PER_SECOND = 1000;
 export const INT16_MAX = 0x7fff;

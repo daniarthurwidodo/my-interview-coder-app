@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+
+# Speech recognition models (downloaded by npm run download-model)
+models/

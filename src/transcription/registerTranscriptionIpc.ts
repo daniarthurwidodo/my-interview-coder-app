@@ -1,10 +1,13 @@
-import { ipcMain, WebContents } from 'electron';
+import { app, ipcMain, WebContents } from 'electron';
+import path from 'node:path';
 import { IPC_CHANNELS } from '../constants';
-import { DeepgramSession } from './deepgramSession';
+import { SherpaSession } from './sherpaSession';
+import { TranscriptionSession } from './types';
 
-const API_KEY_ENV_NAME = 'DEEPGRAM_API_KEY';
+const MODELS_DIR_NAME = 'models';
+const SPEECH_MODEL_DIR_NAME = 'sherpa-onnx-streaming-zipformer-en-2023-06-26';
 
-let activeSession: DeepgramSession | null = null;
+let activeSession: TranscriptionSession | null = null;
 
 function sendToRenderer(target: WebContents, channel: string, payload: unknown): void {
   if (target.isDestroyed()) return;
@@ -13,11 +16,9 @@ function sendToRenderer(target: WebContents, channel: string, payload: unknown):
 
 async function startTranscription(target: WebContents): Promise<void> {
   if (activeSession) throw new Error('Transcription is already running');
-  const apiKey = process.env[API_KEY_ENV_NAME];
-  if (!apiKey) throw new Error(`${API_KEY_ENV_NAME} is not set`);
 
-  const session = new DeepgramSession({
-    apiKey,
+  const session = new SherpaSession({
+    modelDir: path.join(app.getAppPath(), MODELS_DIR_NAME, SPEECH_MODEL_DIR_NAME),
     onTranscript: (segment) => sendToRenderer(target, IPC_CHANNELS.TRANSCRIPT, segment),
     onError: (message) => sendToRenderer(target, IPC_CHANNELS.TRANSCRIPTION_ERROR, message),
   });

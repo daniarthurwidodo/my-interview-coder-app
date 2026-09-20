@@ -31,6 +31,7 @@ import { startPcmStreaming } from './audio/pcmStreamer';
 import { startSystemAudioCapture } from './audio/systemAudio';
 import { startAudioMonitor } from './audio/waveform';
 import { AUDIO_STATUS, LISTEN_LABEL } from './constants';
+import { createRollingSummarizer } from './summary/rollingSummarizer';
 import { ElectronApi, TranscriptSegment } from './transcription/types';
 
 declare global {
@@ -75,7 +76,21 @@ const waveformCanvas = document.getElementById('waveform') as HTMLCanvasElement;
 const transcriptFinal = document.getElementById('transcript-final') as HTMLDivElement;
 const transcriptInterim = document.getElementById('transcript-interim') as HTMLParagraphElement;
 
+const summaryText = document.getElementById('summary-text') as HTMLParagraphElement;
+
 let stopListening: (() => Promise<void>) | null = null;
+
+function showListenError(prefix: string, message: string): void {
+  listenError.textContent = `${prefix}: ${message}`;
+}
+
+const summarizer = createRollingSummarizer({
+  summarize: window.electronAPI.summarize,
+  onSummary: (summary) => {
+    summaryText.textContent = summary;
+  },
+  onError: (message) => showListenError('Summary error', message),
+});
 
 function renderTranscriptSegment({ text, isFinal }: TranscriptSegment): void {
   if (!isFinal) {
@@ -86,10 +101,7 @@ function renderTranscriptSegment({ text, isFinal }: TranscriptSegment): void {
   const line = document.createElement('p');
   line.textContent = text;
   transcriptFinal.append(line);
-}
-
-function showListenError(prefix: string, message: string): void {
-  listenError.textContent = `${prefix}: ${message}`;
+  summarizer.addText(text);
 }
 
 window.electronAPI.onTranscript(renderTranscriptSegment);
@@ -111,6 +123,7 @@ async function startListening(): Promise<void> {
     stopMonitor();
     stopPcmStreaming();
     await window.electronAPI.stopTranscription();
+    await summarizer.stop();
     await session.stop();
     audioStatus.textContent = AUDIO_STATUS.IDLE;
     transcriptInterim.textContent = '';
@@ -118,6 +131,8 @@ async function startListening(): Promise<void> {
 
   try {
     transcriptFinal.replaceChildren();
+    summaryText.textContent = '';
+    summarizer.start();
     await window.electronAPI.startTranscription();
     stopPcmStreaming = await startPcmStreaming({
       audioContext: session.audioContext,
