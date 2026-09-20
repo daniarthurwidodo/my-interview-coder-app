@@ -15,6 +15,7 @@ const electronApi: ElectronApi = {
   startTranscription: () => ipcRenderer.invoke(IPC_CHANNELS.TRANSCRIPTION_START),
   stopTranscription: () => ipcRenderer.invoke(IPC_CHANNELS.TRANSCRIPTION_STOP),
   summarize: (request) => ipcRenderer.invoke(IPC_CHANNELS.SUMMARIZE, request),
+  analyzeScreenshot: (pngDataUrl) => ipcRenderer.invoke(IPC_CHANNELS.ANALYZE_SCREENSHOT, pngDataUrl),
   sendAudioChunk: (chunk) => ipcRenderer.send(IPC_CHANNELS.TRANSCRIPTION_AUDIO, chunk),
   onTranscript: (listener) => subscribe(IPC_CHANNELS.TRANSCRIPT, listener),
   onTranscriptionError: (listener) => subscribe(IPC_CHANNELS.TRANSCRIPTION_ERROR, listener),

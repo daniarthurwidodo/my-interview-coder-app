@@ -6,6 +6,7 @@ export const IPC_CHANNELS = {
   TRANSCRIPT: 'transcription:transcript',
   TRANSCRIPTION_ERROR: 'transcription:error',
   SUMMARIZE: 'summary:summarize',
+  ANALYZE_SCREENSHOT: 'summary:analyze-screenshot',
 } as const;
 
 export const TRANSCRIPTION_SAMPLE_RATE = 16000;

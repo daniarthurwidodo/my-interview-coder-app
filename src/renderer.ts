@@ -51,16 +51,39 @@ function createPreviewImage(dataUrl: string, index: number): HTMLImageElement {
   return image;
 }
 
+const screenshotAnalysis = document.getElementById('screenshot-analysis') as HTMLDivElement;
+
+function toErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+async function analyzeScreenshots(screenshots: string[]): Promise<void> {
+  const resultElements = screenshots.map((_, index) => {
+    const element = document.createElement('p');
+    element.textContent = `Screen ${index + 1}: analyzing...`;
+    return element;
+  });
+  screenshotAnalysis.replaceChildren(...resultElements);
+
+  for (let i = 0; i < screenshots.length; i++) {
+    try {
+      const analysis = await window.electronAPI.analyzeScreenshot(screenshots[i]);
+      resultElements[i].textContent = `Screen ${i + 1}:\n${analysis}`;
+    } catch (error) {
+      resultElements[i].textContent = `Screen ${i + 1}: analysis failed: ${toErrorMessage(error)}`;
+    }
+  }
+}
+
 async function handleCaptureClick(): Promise<void> {
   captureButton.disabled = true;
   captureError.textContent = '';
   try {
     const screenshots = await window.electronAPI.captureScreens();
     capturePreviews.replaceChildren(...screenshots.map(createPreviewImage));
+    await analyzeScreenshots(screenshots);
   } catch (error) {
-    captureError.textContent = `Screenshot failed: ${
-      error instanceof Error ? error.message : String(error)
-    }`;
+    captureError.textContent = `Screenshot failed: ${toErrorMessage(error)}`;
   } finally {
     captureButton.disabled = false;
   }

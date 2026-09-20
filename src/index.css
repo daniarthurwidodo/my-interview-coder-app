@@ -12,7 +12,8 @@ body {
   font-style: italic;
 }
 
-#summary-text {
+#summary-text,
+#screenshot-analysis p {
   white-space: pre-wrap;
 }
 

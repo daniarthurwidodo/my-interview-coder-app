@@ -10,6 +10,7 @@ export interface ElectronApi {
   startTranscription: () => Promise<void>;
   stopTranscription: () => Promise<void>;
   summarize: (request: SummaryRequest) => Promise<string>;
+  analyzeScreenshot: (pngDataUrl: string) => Promise<string>;
   sendAudioChunk: (chunk: ArrayBuffer) => void;
   onTranscript: (listener: (segment: TranscriptSegment) => void) => () => void;
   onTranscriptionError: (listener: (message: string) => void) => () => void;

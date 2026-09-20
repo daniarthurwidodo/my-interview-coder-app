@@ -1,9 +1,4 @@
-import { SummaryRequest } from './types';
-
-export interface ChatMessage {
-  role: 'system' | 'user';
-  content: string;
-}
+import { ChatMessage, SummaryRequest } from './types';
 
 const SYSTEM_PROMPT =
   'You summarize a live transcript of audio being played, such as an interview, meeting or talk. ' +
