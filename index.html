@@ -11,6 +11,11 @@
     <button id="capture-button" type="button">Capture screenshot</button>
     <p id="capture-error" role="alert"></p>
     <div id="capture-previews"></div>
+    <hr />
+    <button id="listen-button" type="button">Start listening</button>
+    <span id="audio-status">Idle</span>
+    <p id="listen-error" role="alert"></p>
+    <canvas id="waveform" width="600" height="120"></canvas>
     <script type="module" src="/src/renderer.ts"></script>
   </body>
 </html>
