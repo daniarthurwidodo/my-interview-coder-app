@@ -7,12 +7,11 @@ import { prepareScreenshotForAnalysis } from './prepareScreenshot';
 import { SummaryRequest } from './types';
 
 const SUMMARY_MODEL = 'openrouter/free';
-// Free vision models are often rate-limited upstream; OpenRouter tries them in order.
-// OpenRouter allows at most 3 entries in `models`.
+// Paid vision models, cheapest first; OpenRouter tries them in order and allows at most 3 entries.
 const SCREENSHOT_MODELS = [
-  'google/gemma-4-26b-a4b-it:free',
-  'google/gemma-4-31b-it:free',
-  'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+  'z-ai/glm-5.3-flash',
+  'deepseek/deepseek-v4.1-flash',
+  'moonshotai/kimi-k2.7-code',
 ];
 const MAX_SUMMARY_INPUT_CHARS = 20000;
 

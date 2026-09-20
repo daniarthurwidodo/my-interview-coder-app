@@ -40,9 +40,12 @@ export async function requestChatCompletion({
   }
 
   const body = await response.json();
+  if (body?.error) {
+    throw new Error(`OpenRouter error ${body.error.code}: ${JSON.stringify(body.error.message)}`);
+  }
   const content = body?.choices?.[0]?.message?.content;
   if (typeof content !== 'string' || !content.trim()) {
-    throw new Error('OpenRouter returned no content');
+    throw new Error(`OpenRouter returned no content: ${JSON.stringify(body).slice(0, ERROR_BODY_PREVIEW_CHARS)}`);
   }
   return content.trim();
 }
