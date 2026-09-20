@@ -30,20 +30,27 @@ import './index.css';
 
 declare global {
   interface Window {
-    electronAPI: { captureWindow: () => Promise<string> };
+    electronAPI: { captureScreens: () => Promise<string[]> };
   }
 }
 
 const captureButton = document.getElementById('capture-button') as HTMLButtonElement;
-const capturePreview = document.getElementById('capture-preview') as HTMLImageElement;
+const capturePreviews = document.getElementById('capture-previews') as HTMLDivElement;
 const captureError = document.getElementById('capture-error') as HTMLParagraphElement;
+
+function createPreviewImage(dataUrl: string, index: number): HTMLImageElement {
+  const image = document.createElement('img');
+  image.src = dataUrl;
+  image.alt = `Screenshot of screen ${index + 1}`;
+  return image;
+}
 
 async function handleCaptureClick(): Promise<void> {
   captureButton.disabled = true;
   captureError.textContent = '';
   try {
-    capturePreview.src = await window.electronAPI.captureWindow();
-    capturePreview.hidden = false;
+    const screenshots = await window.electronAPI.captureScreens();
+    capturePreviews.replaceChildren(...screenshots.map(createPreviewImage));
   } catch (error) {
     captureError.textContent = `Screenshot failed: ${
       error instanceof Error ? error.message : String(error)

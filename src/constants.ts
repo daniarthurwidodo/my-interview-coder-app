@@ -1,3 +1,3 @@
 export const IPC_CHANNELS = {
-  CAPTURE_WINDOW: 'window:capture',
+  CAPTURE_SCREENS: 'screens:capture',
 } as const;

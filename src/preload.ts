@@ -4,6 +4,6 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { IPC_CHANNELS } from './constants';
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  captureWindow: (): Promise<string> =>
-    ipcRenderer.invoke(IPC_CHANNELS.CAPTURE_WINDOW),
+  captureScreens: (): Promise<string[]> =>
+    ipcRenderer.invoke(IPC_CHANNELS.CAPTURE_SCREENS),
 });
