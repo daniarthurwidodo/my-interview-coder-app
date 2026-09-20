@@ -2,7 +2,7 @@ import { ChatMessage } from './types';
 
 const API_KEY_ENV_NAME = 'OPENROUTER_API_KEY';
 const OPENROUTER_CHAT_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const REQUEST_TIMEOUT_MS = 60000;
+const REQUEST_TIMEOUT_MS = 120000;
 const ERROR_BODY_PREVIEW_CHARS = 200;
 
 export function readOpenRouterApiKey(): string {

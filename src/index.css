@@ -17,6 +17,11 @@ body {
   white-space: pre-wrap;
 }
 
+#screenshot-analysis p {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.9rem;
+}
+
 #waveform {
   display: block;
   max-width: 100%;
