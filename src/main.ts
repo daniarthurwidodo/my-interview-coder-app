@@ -3,6 +3,7 @@ import {
   BrowserWindow,
   desktopCapturer,
   ipcMain,
+  Menu,
   screen,
   session,
 } from 'electron';
@@ -80,6 +81,7 @@ const registerDisplayMediaHandler = () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   loadEnvFile();
+  Menu.setApplicationMenu(null);
   registerDisplayMediaHandler();
   registerSummaryIpc();
   registerTranscriptionIpc();
