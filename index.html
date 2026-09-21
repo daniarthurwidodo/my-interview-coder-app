@@ -6,23 +6,7 @@
 
   </head>
   <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
-    <button id="capture-button" type="button">Capture screenshot</button>
-    <p id="capture-error" role="alert"></p>
-    <div id="capture-previews"></div>
-    <hr />
-    <button id="listen-button" type="button">Start listening</button>
-    <span id="audio-status">Idle</span>
-    <p id="listen-error" role="alert"></p>
-    <canvas id="waveform" width="600" height="120"></canvas>
-    <h2>Transcript</h2>
-    <div id="transcript-final"></div>
-    <p id="transcript-interim"></p>
-    <h2>Summary</h2>
-    <p id="summary-text"></p>
-    <h3>Screenshot analysis</h3>
-    <div id="screenshot-analysis"></div>
-    <script type="module" src="/src/renderer.ts"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/renderer.tsx"></script>
   </body>
 </html>

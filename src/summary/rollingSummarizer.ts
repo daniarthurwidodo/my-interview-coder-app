@@ -45,3 +45,5 @@ export function createRollingSummarizer({ summarize, onSummary, onError }: Rolli
     },
   };
 }
+
+export type RollingSummarizer = ReturnType<typeof createRollingSummarizer>;
